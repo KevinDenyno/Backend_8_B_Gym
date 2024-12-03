@@ -13,16 +13,6 @@ class CustomerController extends Controller
 {
     public function register(Request $request)
     {
-        // Validation
-        $request->validate([
-            'username' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:customers',
-            'password' => 'required|string|min:8',
-            'jenis_kelamin' => 'required|string|max:255',
-            'tinggi_badan' => 'required|integer',
-            'berat_badan' => 'required|integer',
-        ]);
-
         // Creating the customer
         $customer = Customer::create([
             'username' => $request->username,
@@ -37,17 +27,17 @@ class CustomerController extends Controller
         return response()->json([
             'customer' => $customer,
             'message' => 'Customer registered successfully!',
-        ], 201);
+        ], 200);
     }
 
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|string|email',
+            'username' => 'required|string',
             'password' => 'required|string',
         ]);
 
-        $customer = Customer::where('email', $request->email)->first();
+        $customer = Customer::where('username', $request->username)->first();
 
         if (!$customer || !Hash::check($request->password, $customer->password)) {
             return response()->json(['message' => 'Invalid credentials'], 401);
